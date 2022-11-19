@@ -29,7 +29,7 @@ object FileContents:
     Using.resource(Source.fromFile(path))(_.getLines().mkString("\n"))
 
   def readTextContentsIn(path: String, ext: String): Map[String, String] =
-    _readTextContentsIn(folderItems(Paths.get(path)), ext)
+    _readTextContentsIn(folderItems(Paths.get(path)), ext)(identity)
 
   private def folderItems(path: Path): Seq[Path] =
     Files
@@ -38,22 +38,29 @@ object FileContents:
       .asScala
       .toSeq
 
-  private def _readTextContentsIn(folderItems: Seq[Path], ext: String): Map[String, String] =
+  private def _readTextContentsIn[T](folderItems: Seq[Path], ext: String)(
+      f: String => T
+  ): Map[String, T] =
     folderItems
       .filterNot(_.toFile.isDirectory)
       .filter(_.getFileName.toString.endsWith(ext))
       .sortBy(_.getFileName.toString)
-      .map(path => (path.toString, readTextContentOf(path.toString)))
+      .map(path => (path.toString, f(readTextContentOf(path.toString))))
       .toMap
 
   def readDeepTextContentsIn(path: String, ext: String): Map[String, String] =
-    _readDeepTextContentsIn(Paths.get(path), ext)
+    _parseDeepTextContentsIn(Paths.get(path), ext)(identity)
 
-  private def _readDeepTextContentsIn(path: Path, ext: String): Map[String, String] =
+  def parseDeepTextContentsIn[T](path: String, ext: String)(f: String => T): Map[String, T] =
+    _parseDeepTextContentsIn(Paths.get(path), ext)(f)
+
+  private def _parseDeepTextContentsIn[T](path: Path, ext: String)(
+      f: String => T
+  ): Map[String, T] =
     val items = folderItems(path)
-    val files = _readTextContentsIn(items, ext)
+    val files = _readTextContentsIn(items, ext)(f)
     val folders = items
       .filter(_.toFile.isDirectory)
-      .flatMap(path => _readDeepTextContentsIn(path, ext))
+      .flatMap(path => _parseDeepTextContentsIn(path, ext)(f))
       .toMap
     files ++ folders

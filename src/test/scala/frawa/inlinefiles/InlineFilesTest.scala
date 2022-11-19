@@ -45,7 +45,19 @@ class InlineFilesTest extends FunSuite:
       Map(
         "./test-files/folder/inlined1.txt"      -> "First",
         "./test-files/folder/inlined2.txt"      -> "Second",
-        "./test-files/folder/deep/inlined3.txt" -> "Third"
+        "./test-files/folder/deep/inlined3.txt" -> "Third\nand more"
+      )
+    )
+  }
+
+  test("compile-time mapped inline files in nested folders") {
+    val inlined: Map[String, Seq[Word]] = Words.inlineWords("./test-files/folder")
+    assertEquals(
+      inlined,
+      Map(
+        "./test-files/folder/inlined1.txt"      -> Seq(Word("First")),
+        "./test-files/folder/inlined2.txt"      -> Seq(Word("Second")),
+        "./test-files/folder/deep/inlined3.txt" -> Seq(Word("Third"), Word("and"), Word("more"))
       )
     )
   }
