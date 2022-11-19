@@ -25,28 +25,13 @@ object InlineFiles:
     inlineTextFile_impl('path)
   }
 
-  private def inlineTextFile_impl(path: Expr[String])(using
-      Quotes
-  ): Expr[String] =
-    Expr(readTextContentOf(path.valueOrAbort))
-
   inline def inlineTextFiles(inline path: String, inline ext: String): Map[String, String] = ${
     inlineTextFiles_impl('path, 'ext)
   }
 
-  private def inlineTextFiles_impl(path: Expr[String], ext: Expr[String])(using
-      Quotes
-  ): Expr[Map[String, String]] =
-    Expr(readTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
-
   inline def inlineDeepTextFiles(inline path: String, inline ext: String): Map[String, String] = ${
     inlineDeepTextFiles_impl('path, 'ext)
   }
-
-  private def inlineDeepTextFiles_impl(path: Expr[String], ext: Expr[String])(using
-      Quotes
-  ): Expr[Map[String, String]] =
-    Expr(readDeepTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
 
   extension [T](inlined: Map[String, T])
     def files(path: String): Map[String, T] =
@@ -56,3 +41,18 @@ object InlineFiles:
         .filterKeys(_.startsWith(prefix))
         .map((p, v) => (p.substring(prefixLength), v))
         .toMap
+
+  private def inlineTextFile_impl(path: Expr[String])(using
+      Quotes
+  ): Expr[String] =
+    Expr(readTextContentOf(path.valueOrAbort))
+
+  private def inlineTextFiles_impl(path: Expr[String], ext: Expr[String])(using
+      Quotes
+  ): Expr[Map[String, String]] =
+    Expr(readTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
+
+  private def inlineDeepTextFiles_impl(path: Expr[String], ext: Expr[String])(using
+      Quotes
+  ): Expr[Map[String, String]] =
+    Expr(readDeepTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
