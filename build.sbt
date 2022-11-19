@@ -31,6 +31,7 @@ lazy val sharedPlatformSettings = Seq(
 lazy val sharedScalacSettings = Seq(
   scalacOptions ++= {
     Seq(
+      "-Xcheck-macros",
       "-deprecation",
       "-feature",
       "-unchecked",
