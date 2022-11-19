@@ -32,8 +32,8 @@ class InlineFilesTest extends FunSuite:
     assertEquals(
       inlined,
       Map(
-        "./test-files/folder/inlined1.txt" -> "First",
-        "./test-files/folder/inlined2.txt" -> "Second"
+        "inlined1.txt" -> "First",
+        "inlined2.txt" -> "Second"
       )
     )
   }
@@ -43,9 +43,9 @@ class InlineFilesTest extends FunSuite:
     assertEquals(
       inlined,
       Map(
-        "./test-files/folder/inlined1.txt"      -> "First",
-        "./test-files/folder/inlined2.txt"      -> "Second",
-        "./test-files/folder/deep/inlined3.txt" -> "Third\nand more"
+        "inlined1.txt"      -> "First",
+        "inlined2.txt"      -> "Second",
+        "deep/inlined3.txt" -> "Third\nand more"
       )
     )
   }
@@ -55,9 +55,9 @@ class InlineFilesTest extends FunSuite:
     assertEquals(
       inlined,
       Map(
-        "./test-files/folder/inlined1.txt"      -> Seq(Word("First")),
-        "./test-files/folder/inlined2.txt"      -> Seq(Word("Second")),
-        "./test-files/folder/deep/inlined3.txt" -> Seq(Word("Third"), Word("and"), Word("more"))
+        "inlined1.txt"      -> Seq(Word("First")),
+        "inlined2.txt"      -> Seq(Word("Second")),
+        "deep/inlined3.txt" -> Seq(Word("Third"), Word("and"), Word("more"))
       )
     )
   }

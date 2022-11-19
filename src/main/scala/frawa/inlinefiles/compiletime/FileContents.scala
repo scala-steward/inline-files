@@ -29,35 +29,38 @@ object FileContents:
     Using.resource(Source.fromFile(path))(_.getLines().mkString("\n"))
 
   def readTextContentsIn(path: String, ext: String): Map[String, String] =
-    parseTextContentsIn(folderItems(Paths.get(path)), ext)(identity)
+    val root = Paths.get(path)
+    parseTextContentsIn(root, folderItems(root), ext)(identity)
 
   def readDeepTextContentsIn(path: String, ext: String): Map[String, String] =
-    parseTextContentsIn(Paths.get(path), ext, true)(identity)
+    val root = Paths.get(path)
+    parseTextContentsIn(root, root, ext, true)(identity)
 
   def parseTextContentsIn[T](path: String, ext: String, recurse: Boolean)(
       f: String => T
   ): Map[String, T] =
-    parseTextContentsIn(Paths.get(path), ext, recurse)(f)
+    val root = Paths.get(path)
+    parseTextContentsIn(root, root, ext, recurse)(f)
 
-  private def parseTextContentsIn[T](path: Path, ext: String, recurse: Boolean)(
+  private def parseTextContentsIn[T](root: Path, path: Path, ext: String, recurse: Boolean)(
       f: String => T
   ): Map[String, T] =
     val items = folderItems(path)
-    val files = parseTextContentsIn(items, ext)(f)
+    val files = parseTextContentsIn(root, items, ext)(f)
     val folders = items
       .filter(_.toFile.isDirectory)
-      .flatMap(path => parseTextContentsIn(path, ext, recurse)(f))
+      .flatMap(path => parseTextContentsIn(root, path, ext, recurse)(f))
       .toMap
     files ++ folders
 
-  private def parseTextContentsIn[T](folderItems: Seq[Path], ext: String)(
+  private def parseTextContentsIn[T](root: Path, folderItems: Seq[Path], ext: String)(
       f: String => T
   ): Map[String, T] =
     folderItems
       .filterNot(_.toFile.isDirectory)
       .filter(_.getFileName.toString.endsWith(ext))
       .sortBy(_.getFileName.toString)
-      .map(path => (path.toString, f(readTextContentOf(path.toString))))
+      .map(path => (root.relativize(path).toString, f(readTextContentOf(path.toString))))
       .toMap
 
   private def folderItems(path: Path): Seq[Path] =
