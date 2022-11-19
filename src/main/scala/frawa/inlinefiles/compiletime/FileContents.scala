@@ -29,16 +29,28 @@ object FileContents:
     Using.resource(Source.fromFile(path))(_.getLines().mkString("\n"))
 
   def readTextContentsIn(path: String, ext: String): Map[String, String] =
-    _readTextContentsIn(folderItems(Paths.get(path)), ext)(identity)
+    parseTextContentsIn(folderItems(Paths.get(path)), ext)(identity)
 
-  private def folderItems(path: Path): Seq[Path] =
-    Files
-      .list(path)
-      .iterator
-      .asScala
-      .toSeq
+  def readDeepTextContentsIn(path: String, ext: String): Map[String, String] =
+    parseTextContentsIn(Paths.get(path), ext, true)(identity)
 
-  private def _readTextContentsIn[T](folderItems: Seq[Path], ext: String)(
+  def parseTextContentsIn[T](path: String, ext: String, recurse: Boolean)(
+      f: String => T
+  ): Map[String, T] =
+    parseTextContentsIn(Paths.get(path), ext, recurse)(f)
+
+  private def parseTextContentsIn[T](path: Path, ext: String, recurse: Boolean)(
+      f: String => T
+  ): Map[String, T] =
+    val items = folderItems(path)
+    val files = parseTextContentsIn(items, ext)(f)
+    val folders = items
+      .filter(_.toFile.isDirectory)
+      .flatMap(path => parseTextContentsIn(path, ext, recurse)(f))
+      .toMap
+    files ++ folders
+
+  private def parseTextContentsIn[T](folderItems: Seq[Path], ext: String)(
       f: String => T
   ): Map[String, T] =
     folderItems
@@ -48,19 +60,9 @@ object FileContents:
       .map(path => (path.toString, f(readTextContentOf(path.toString))))
       .toMap
 
-  def readDeepTextContentsIn(path: String, ext: String): Map[String, String] =
-    _parseDeepTextContentsIn(Paths.get(path), ext)(identity)
-
-  def parseDeepTextContentsIn[T](path: String, ext: String)(f: String => T): Map[String, T] =
-    _parseDeepTextContentsIn(Paths.get(path), ext)(f)
-
-  private def _parseDeepTextContentsIn[T](path: Path, ext: String)(
-      f: String => T
-  ): Map[String, T] =
-    val items = folderItems(path)
-    val files = _readTextContentsIn(items, ext)(f)
-    val folders = items
-      .filter(_.toFile.isDirectory)
-      .flatMap(path => _parseDeepTextContentsIn(path, ext)(f))
-      .toMap
-    files ++ folders
+  private def folderItems(path: Path): Seq[Path] =
+    Files
+      .list(path)
+      .iterator
+      .asScala
+      .toSeq

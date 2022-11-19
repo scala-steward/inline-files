@@ -17,6 +17,6 @@ object Words {
       def apply(v: Word)(using Quotes): Expr[Word] =
         val vv = Expr(v.word)
         '{ Word($vv) }
-    Expr(FileContents.parseDeepTextContentsIn(path.valueOrAbort, ".txt")(parseWords))
+    Expr(FileContents.parseTextContentsIn(path.valueOrAbort, ".txt", true)(parseWords))
 
 }
