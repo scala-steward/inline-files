@@ -26,3 +26,22 @@ class InlineFilesTest extends FunSuite:
     val inlined = inlineTextFile("./test-files/inlined.txt")
     assertEquals(inlined, "This file content will be inlined.")
   }
+
+  test("inline files in a folder") {
+    val inlined = inlineTextFiles("./test-files/folder", ".txt")
+    assertEquals(inlined.size, 2)
+    assertEquals(
+      inlined.keySet,
+      Set(
+        "./test-files/folder/inlined1.txt",
+        "./test-files/folder/inlined2.txt"
+      )
+    )
+    assertEquals(
+      inlined,
+      Map(
+        "./test-files/folder/inlined1.txt" -> "First",
+        "./test-files/folder/inlined2.txt" -> "Second"
+      )
+    )
+  }

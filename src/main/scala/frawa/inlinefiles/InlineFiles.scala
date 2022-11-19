@@ -30,6 +30,15 @@ object InlineFiles:
   ): Expr[String] =
     Expr(readTextContentOf(path.valueOrAbort))
 
+  inline def inlineTextFiles(inline path: String, inline ext: String): Map[String, String] = ${
+    inlineTextFiles_impl('path, 'ext)
+  }
+
+  private def inlineTextFiles_impl(path: Expr[String], ext: Expr[String])(using
+      Quotes
+  ): Expr[Map[String, String]] =
+    Expr(readTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
+
   // inline def folderContents(inline path: String, ext: String): FolderContents[String] = ${
   //   folderContents_impl('path, 'ext)
   // }

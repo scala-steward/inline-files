@@ -27,6 +27,21 @@ object FileContents:
   def readTextContentOf(path: String): String =
     Using.resource(Source.fromFile(path))(_.getLines().mkString("\n"))
 
+  def readTextContentsIn(path: String, ext: String): Map[String, String] =
+    import scala.jdk.CollectionConverters.*
+    Files
+      .list(Paths.get(path))
+      .iterator
+      .asScala
+      .toSeq
+      .filterNot(_.toFile.isDirectory)
+      .filter(_.getFileName.toString.endsWith(ext))
+      .sortBy(_.getFileName.toString)
+      .map(path => (path.toString, readTextContentOf(path.toAbsolutePath.toString)))
+      .toMap
+      .view
+      .toMap
+
   // given [T: ToExpr: Type]: ToExpr[FolderContents[T]] with
   //   def apply(value: FolderContents[T])(using Quotes): Expr[FolderContents[T]] =
   //     value match {
