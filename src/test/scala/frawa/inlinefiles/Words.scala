@@ -6,7 +6,8 @@ import frawa.inlinefiles.compiletime.FileContents
 case class Word(word: String)
 
 object Words {
-  def parseWords(text: String): Seq[Word] = text.split("\\s").map(Word(_))
+  def parseWords(text: String): Seq[Word] =
+    text.split("\\s").toSeq.map(Word(_))
 
   inline def inlineWords(inline path: String): Map[String, Seq[Word]] = ${
     inlineWords_impl('path)
