@@ -29,19 +29,23 @@ class InlineFilesTest extends FunSuite:
 
   test("inline files in a folder") {
     val inlined = inlineTextFiles("./test-files/folder", ".txt")
-    assertEquals(inlined.size, 2)
-    assertEquals(
-      inlined.keySet,
-      Set(
-        "./test-files/folder/inlined1.txt",
-        "./test-files/folder/inlined2.txt"
-      )
-    )
     assertEquals(
       inlined,
       Map(
         "./test-files/folder/inlined1.txt" -> "First",
         "./test-files/folder/inlined2.txt" -> "Second"
+      )
+    )
+  }
+
+  test("inline files in nested folders") {
+    val inlined = inlineDeepTextFiles("./test-files/folder", ".txt")
+    assertEquals(
+      inlined,
+      Map(
+        "./test-files/folder/inlined1.txt"      -> "First",
+        "./test-files/folder/inlined2.txt"      -> "Second",
+        "./test-files/folder/deep/inlined3.txt" -> "Third"
       )
     )
   }

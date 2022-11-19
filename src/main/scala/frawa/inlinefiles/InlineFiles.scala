@@ -39,11 +39,11 @@ object InlineFiles:
   ): Expr[Map[String, String]] =
     Expr(readTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
 
-  // inline def folderContents(inline path: String, ext: String): FolderContents[String] = ${
-  //   folderContents_impl('path, 'ext)
-  // }
+  inline def inlineDeepTextFiles(inline path: String, inline ext: String): Map[String, String] = ${
+    inlineDeepTextFiles_impl('path, 'ext)
+  }
 
-  // private def folderContents_impl(path: Expr[String], ext: Expr[String])(using
-  //     Quotes
-  // ): Expr[FolderContents[String]] =
-  //   Expr(readFolderContentsOf(path.valueOrAbort, ext.valueOrAbort)(identity))
+  private def inlineDeepTextFiles_impl(path: Expr[String], ext: Expr[String])(using
+      Quotes
+  ): Expr[Map[String, String]] =
+    Expr(readDeepTextContentsIn(path.valueOrAbort, ext.valueOrAbort))

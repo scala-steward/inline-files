@@ -17,6 +17,7 @@
 package frawa.inlinefiles.internal
 
 import java.nio.file.{Files, Path, Paths}
+import scala.jdk.CollectionConverters.*
 
 import scala.io.Source
 import scala.util.Using
@@ -28,52 +29,31 @@ object FileContents:
     Using.resource(Source.fromFile(path))(_.getLines().mkString("\n"))
 
   def readTextContentsIn(path: String, ext: String): Map[String, String] =
-    import scala.jdk.CollectionConverters.*
+    _readTextContentsIn(folderItems(Paths.get(path)), ext)
+
+  private def folderItems(path: Path): Seq[Path] =
     Files
-      .list(Paths.get(path))
+      .list(path)
       .iterator
       .asScala
       .toSeq
+
+  private def _readTextContentsIn(folderItems: Seq[Path], ext: String): Map[String, String] =
+    folderItems
       .filterNot(_.toFile.isDirectory)
       .filter(_.getFileName.toString.endsWith(ext))
       .sortBy(_.getFileName.toString)
-      .map(path => (path.toString, readTextContentOf(path.toAbsolutePath.toString)))
-      .toMap
-      .view
+      .map(path => (path.toString, readTextContentOf(path.toString)))
       .toMap
 
-  // given [T: ToExpr: Type]: ToExpr[FolderContents[T]] with
-  //   def apply(value: FolderContents[T])(using Quotes): Expr[FolderContents[T]] =
-  //     value match {
-  //       case FolderContents.File(content) =>
-  //         val vv = Expr(content)
-  //         '{ FolderContents.File($vv) }
-  //       case FolderContents.Folder(items) =>
-  //         val vv = Expr(items)
-  //         '{ FolderContents.Folder($vv) }
-  //     }
+  def readDeepTextContentsIn(path: String, ext: String): Map[String, String] =
+    _readDeepTextContentsIn(Paths.get(path), ext)
 
-  // def readFolderContentsOf[T](path: String, ext: String)(f: String => T): FolderContents[T] =
-  //   readFolderContentsOf(Paths.get(path), ext)(f)
-
-  // private def readFolderContentsOf[T](path: Path, ext: String)(f: String => T): FolderContents[T] =
-  //   import scala.jdk.CollectionConverters.*
-  //   val items = Files
-  //     .list(path)
-  //     .iterator
-  //     .asScala
-  //     .toSeq
-  //   val files = items
-  //     .filterNot(_.toFile.isDirectory)
-  //     .filter(_.getFileName.toString.endsWith(ext))
-  //     .sortBy(_.getFileName.toString)
-  //     .map(path => (path.getFileName.toString, f(readContentOf(path.toAbsolutePath.toString))))
-  //     .toMap
-  //     .view
-  //     .mapValues(FolderContents.File(_))
-  //     .toMap
-  //   val folders = items
-  //     .filter(_.toFile.isDirectory)
-  //     .map(path => (path.getFileName.toString, readFolderContentsOf(path, ext)(f)))
-  //     .toMap
-  //   FolderContents.Folder(files ++ folders)
+  private def _readDeepTextContentsIn(path: Path, ext: String): Map[String, String] =
+    val items = folderItems(path)
+    val files = _readTextContentsIn(items, ext)
+    val folders = items
+      .filter(_.toFile.isDirectory)
+      .flatMap(path => _readDeepTextContentsIn(path, ext))
+      .toMap
+    files ++ folders
