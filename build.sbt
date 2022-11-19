@@ -3,8 +3,7 @@ addCommandAlias("lintFix", "headerCreateAll;fixFix;fmtFix")
 addCommandAlias("fmtCheck", "all scalafmtCheck scalafmtSbtCheck")
 addCommandAlias("fmtFix", "all scalafmt scalafmtSbt")
 addCommandAlias("fixCheck", "scalafixAll --check")
-ddCommandAlias("fixFix", "scalafixAll")
-addCommandAlias("npmAll", "npmCI;npmRunCI")
+addCommandAlias("fixFix", "scalafixAll")
 
 lazy val scalaVersion3 = "3.2.1"
 
@@ -48,7 +47,7 @@ lazy val sharedTestSettings = Seq(
   Test / testOptions += Tests.Argument("-q", "--summary=0")
 )
 
-lazy val macros = project
+lazy val root = project
   .in(file("."))
   .settings(
     name := "inline-files"
