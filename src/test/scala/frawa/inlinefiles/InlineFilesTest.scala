@@ -50,6 +50,16 @@ class InlineFilesTest extends FunSuite:
     )
   }
 
+  test("filter inline files in nested folders") {
+    val inlined = inlineDeepTextFiles("./test-files/folder", ".txt").files("deep")
+    assertEquals(
+      inlined,
+      Map(
+        "inlined3.txt" -> "Third\nand more"
+      )
+    )
+  }
+
   test("compile-time mapped inline files in nested folders") {
     val inlined: Map[String, Seq[Word]] = Words.inlineWords("./test-files/folder")
     assertEquals(

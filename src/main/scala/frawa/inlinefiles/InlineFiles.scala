@@ -47,3 +47,12 @@ object InlineFiles:
       Quotes
   ): Expr[Map[String, String]] =
     Expr(readDeepTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
+
+  extension [T](inlined: Map[String, T])
+    def files(path: String): Map[String, T] =
+      val prefix       = if path.endsWith("/") then path else path + "/"
+      val prefixLength = prefix.length()
+      inlined.view
+        .filterKeys(_.startsWith(prefix))
+        .map((p, v) => (p.substring(prefixLength), v))
+        .toMap
