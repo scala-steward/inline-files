@@ -19,7 +19,7 @@ package frawa.inlinefiles
 import scala.quoted.*
 
 object InlineFiles:
-  import internal.FileContents.{given, *}
+  import compiletime.FileContents.{given, *}
 
   inline def inlineTextFile(inline path: String): String = ${
     inlineTextFile_impl('path)

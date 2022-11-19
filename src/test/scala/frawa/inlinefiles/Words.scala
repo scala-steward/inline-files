@@ -1,7 +1,7 @@
 package frawa.inlinefiles
 
 import scala.quoted.*
-import frawa.inlinefiles.internal.FileContents
+import frawa.inlinefiles.compiletime.FileContents
 
 case class Word(word: String)
 

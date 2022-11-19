@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package frawa.inlinefiles.internal
+package frawa.inlinefiles.compiletime
 
 import java.nio.file.{Files, Path, Paths}
 import scala.jdk.CollectionConverters.*
