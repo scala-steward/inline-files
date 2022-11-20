@@ -1,1 +1,1 @@
-ThisBuild / version := "LATEST-SNAPSHOT"
+// ThisBuild / version := "LATEST-SNAPSHOT"

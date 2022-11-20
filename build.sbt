@@ -15,10 +15,8 @@ lazy val sharedSettings = Seq(
   organizationName := "Frank Wagner",
   startYear        := Some(2022),
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  description := "A macro library to inline file contents.",
-  sonatypeProjectHosting := Some(
-    GitHubHosting("frawa", "inline-files", "agilecoderfrank@gmail.com")
-  ),
+  description            := "A macro library to inline file contents.",
+  sonatypeProjectHosting := Some(GitHubHosting("frawa", "typed-json", "agilecoderfrank@gmail.com")),
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   publishTo              := sonatypePublishToBundle.value,
   versionScheme          := Some("semver-spec")
