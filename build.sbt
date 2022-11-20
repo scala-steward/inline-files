@@ -49,6 +49,7 @@ lazy val sharedTestSettings = Seq(
 lazy val root = project
   .in(file("."))
   .aggregate(inlineFiles.jvm, inlineFiles.js)
+  .settings(sharedSettings)
   .settings(
     publish      := {},
     publishLocal := {}
