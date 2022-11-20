@@ -48,12 +48,12 @@ lazy val sharedTestSettings = Seq(
 
 lazy val root = project
   .in(file("."))
+  .settings(
+    name           := "inline-files-root",
+    publish / skip := true
+  )
   .aggregate(inlineFiles.jvm, inlineFiles.js)
   .settings(sharedSettings)
-  .settings(
-    publish      := {},
-    publishLocal := {}
-  )
 
 lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
