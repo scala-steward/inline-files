@@ -17,6 +17,7 @@
 package frawa.inlinefiles.compiletime
 
 import java.nio.file.{Files, Path, Paths}
+import java.io.File
 import scala.jdk.CollectionConverters.*
 
 import scala.io.Source
@@ -25,7 +26,7 @@ import scala.quoted.*
 
 object FileContents:
   def readTextContentOf(path: String): String =
-    Using.resource(Source.fromFile(path))(_.getLines().mkString("\n"))
+    readTextContent(Paths.get(path).toFile)
 
   def readTextContentsIn(path: String, ext: String): Map[String, String] =
     val root = Paths.get(path)
@@ -40,6 +41,9 @@ object FileContents:
   ): Map[String, T] =
     val root = Paths.get(path)
     parseTextContentsIn(root, root, ext, recurse)(f)
+
+  private def readTextContent(file: File): String =
+    Using.resource(Source.fromFile(file))(_.getLines().mkString("\n"))
 
   private def parseTextContentsIn[T](root: Path, path: Path, ext: String, recurse: Boolean)(
       f: String => T
@@ -59,7 +63,7 @@ object FileContents:
       .filterNot(_.toFile.isDirectory)
       .filter(_.getFileName.toString.endsWith(ext))
       .sortBy(_.getFileName.toString)
-      .map(path => (root.relativize(path).toString, f(readTextContentOf(path.toString))))
+      .map(path => (root.relativize(path).toString, f(readTextContent(path.toFile))))
       .toMap
 
   private def folderItems(path: Path): Seq[Path] =
