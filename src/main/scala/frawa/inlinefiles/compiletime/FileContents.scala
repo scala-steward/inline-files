@@ -24,7 +24,6 @@ import scala.util.Using
 import scala.quoted.*
 
 object FileContents:
-
   def readTextContentOf(path: String): String =
     Using.resource(Source.fromFile(path))(_.getLines().mkString("\n"))
 

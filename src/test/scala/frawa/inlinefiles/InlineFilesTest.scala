@@ -51,11 +51,22 @@ class InlineFilesTest extends FunSuite:
   }
 
   test("filter inline files in nested folders") {
-    val inlined = inlineDeepTextFiles("./test-files/folder", ".txt").files("deep")
+    val inlined = inlineDeepTextFiles("./test-files/folder", ".txt").folder("deep")
     assertEquals(
       inlined,
       Map(
         "inlined3.txt" -> "Third\nand more"
+      )
+    )
+  }
+
+  test("filter inline files without nested folders") {
+    val inlined = inlineDeepTextFiles("./test-files/folder", ".txt").files()
+    assertEquals(
+      inlined,
+      Map(
+        "inlined1.txt" -> "First",
+        "inlined2.txt" -> "Second"
       )
     )
   }

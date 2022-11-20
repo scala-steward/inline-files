@@ -34,12 +34,17 @@ object InlineFiles:
   }
 
   extension [T](inlined: Map[String, T])
-    def files(path: String): Map[String, T] =
+    def folder(path: String): Map[String, T] =
       val prefix       = if path.endsWith("/") then path else path + "/"
       val prefixLength = prefix.length()
       inlined.view
         .filterKeys(_.startsWith(prefix))
         .map((p, v) => (p.substring(prefixLength), v))
+        .toMap
+
+    def files(): Map[String, T] =
+      inlined.view
+        .filterKeys(!_.contains("/"))
         .toMap
 
   private def inlineTextFile_impl(path: Expr[String])(using
