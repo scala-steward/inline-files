@@ -1,6 +1,6 @@
 # inline-files
 
-_TODO_ CI badge
+![ci](https://github.com/frawa/inline-files/actions/workflows/ci.yml/badge.svg)
 
 _TODO_ Scaladex badge
 
