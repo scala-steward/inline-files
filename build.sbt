@@ -18,7 +18,7 @@ lazy val sharedSettings = Seq(
   description            := "A macro library to inline file contents.",
   sonatypeProjectHosting := Some(GitHubHosting("frawa", "typed-json", "agilecoderfrank@gmail.com")),
   sonatypeCredentialHost := "s01.oss.sonatype.org",
-  publishTo              := sonatypePublishToBundle.value,
+  sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
   versionScheme          := Some("semver-spec")
 )
 
