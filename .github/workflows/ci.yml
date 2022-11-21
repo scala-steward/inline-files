@@ -45,7 +45,7 @@ jobs:
           check-latest: true
           cache: 'sbt'
       - name: Release
-        run: ./sbt ci-release
+        run: sbt ci-release
         env:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
