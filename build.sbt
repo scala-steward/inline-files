@@ -5,7 +5,7 @@ addCommandAlias("fmtFix", "all scalafmt scalafmtSbt")
 addCommandAlias("fixCheck", "scalafixAll --check")
 addCommandAlias("fixFix", "scalafixAll")
 
-lazy val scalaVersion3 = "3.2.1"
+lazy val scalaVersion3 = "3.2.2"
 
 import xerial.sbt.Sonatype._
 
