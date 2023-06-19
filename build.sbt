@@ -39,8 +39,8 @@ lazy val sharedScalacSettings = Seq(
       "-new-syntax",
       "-indent"
     )
-  },
-  ThisBuild / semanticdbEnabled := true
+  }
+  // ThisBuild / semanticdbEnabled := true
 )
 
 lazy val sharedTestSettings = Seq(
@@ -48,8 +48,10 @@ lazy val sharedTestSettings = Seq(
   Test / testOptions += Tests.Argument("-q", "--summary=0")
 )
 
+lazy val rootFolder = file(".")
+
 lazy val root = project
-  .in(file("."))
+  .in(rootFolder)
   .settings(
     name           := "inline-files-root",
     publish / skip := true
@@ -67,3 +69,8 @@ lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
   .settings(sharedSettings)
   .settings(sharedScalacSettings)
   .settings(sharedTestSettings)
+  .settings(scalacOptions ++= {
+    Seq(
+      s"-Xmacro-settings:MY_INLINE_HOME=${rootFolder.getAbsolutePath()}"
+    )
+  })
