@@ -22,25 +22,43 @@ import scala.jdk.CollectionConverters.*
 
 import scala.io.Source
 import scala.util.Using
-import scala.quoted.*
+
+import scala.annotation.experimental
 
 object FileContents:
-  def readTextContentOf(path: String): String =
-    readTextContent(Paths.get(path).toFile)
+  def readTextContentOf(path: String, home: Option[Path] = None): String =
+    val root = resolve(path, home)
+    readTextContent(root.toFile)
 
-  def readTextContentsIn(path: String, ext: String): Map[String, String] =
-    val root = Paths.get(path)
+  def readTextContentsIn(
+      path: String,
+      ext: String,
+      home: Option[Path] = None
+  ): Map[String, String] =
+    val root = resolve(path, home)
     parseTextContentsIn(root, folderItems(root), ext)(identity)
 
-  def readDeepTextContentsIn(path: String, ext: String): Map[String, String] =
-    val root = Paths.get(path)
+  def readDeepTextContentsIn(
+      path: String,
+      ext: String,
+      home: Option[Path] = None
+  ): Map[String, String] =
+    val root = resolve(path, home)
     parseTextContentsIn(root, root, ext, true)(identity)
 
-  def parseTextContentsIn[T](path: String, ext: String, recurse: Boolean)(
+  def parseTextContentsIn[T](
+      path: String,
+      ext: String,
+      recurse: Boolean,
+      home: Option[Path] = None
+  )(
       f: String => T
   ): Map[String, T] =
     val root = Paths.get(path)
     parseTextContentsIn(root, root, ext, recurse)(f)
+
+  private def resolve(path: String, home: Option[Path] = None): Path =
+    home.map(_.resolve(path)).getOrElse(Paths.get(path))
 
   private def readTextContent(file: File): String =
     Using.resource(Source.fromFile(file))(_.getLines().mkString("\n"))
