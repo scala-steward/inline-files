@@ -74,7 +74,8 @@ class InlineFilesWithHomeTest extends FunSuite:
   }
 
   test("compile-time mapped inline files in nested folders") {
-    val inlined: Map[String, Seq[Word]] = Words.inlineWords("./test-files/folder")
+    val inlined: Map[String, Seq[Word]] =
+      WordsWithHome.inlineWords("./test-files/folder")("MY_INLINE_HOME")
     assertEquals(
       inlined,
       Map(

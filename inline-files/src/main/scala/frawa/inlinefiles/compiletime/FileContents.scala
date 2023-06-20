@@ -54,7 +54,7 @@ object FileContents:
   )(
       f: String => T
   ): Map[String, T] =
-    val root = Paths.get(path)
+    val root = resolve(path, home)
     parseTextContentsIn(root, root, ext, recurse)(f)
 
   private def resolve(path: String, home: Option[Path] = None): Path =
