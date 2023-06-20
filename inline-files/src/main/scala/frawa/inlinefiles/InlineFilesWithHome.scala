@@ -85,7 +85,7 @@ object InlineFilesWithHome:
     )
 
   @experimental
-  private def resolveHome(setting: String)(using
+  def resolveHome(setting: String)(using
       Quotes
   ): Path =
     import quotes.reflect.*
@@ -94,6 +94,6 @@ object InlineFilesWithHome:
       .find(_.startsWith(prefix))
       .map(_.substring(prefix.length()))
       .getOrElse {
-        throw new IllegalArgumentException(s"missing -Xmacro-setting '${setting}'")
+        throw new IllegalArgumentException(s"missing -Xmacro-settings:${setting}=...,")
       }
     Paths.get(home)
