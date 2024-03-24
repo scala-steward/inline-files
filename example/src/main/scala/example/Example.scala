@@ -1,5 +1,7 @@
 package example
 
+import frawa.inlinefiles.InlineFiles.inlineTextFile
+
 object Example {
-  val inlinedText = "foo"
+  val inlinedText = inlineTextFile("./test-files/inlined.txt")
 }

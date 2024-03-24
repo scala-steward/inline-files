@@ -85,12 +85,12 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
   )
   .settings(sharedTestSettings)
   .settings(
-    crossScalaVersions := Seq(scalaVersion3, "2.13.12")
-    // scalacOptions ++= {
-    //   CrossVersion.partialVersion(scalaVersion.value) match {
-    //     case Some((2, 13)) => Seq("-Ytasty-reader")
-    //     case _             => Seq.empty
-    //   }
-    // }
+    crossScalaVersions := Seq(scalaVersion3, "2.13.12"),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, 13)) => Seq("-Ytasty-reader")
+        case _             => Seq.empty
+      }
+    }
   )
   .dependsOn(inlineFiles)
