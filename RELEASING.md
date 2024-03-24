@@ -1,4 +1,4 @@
-# Realising
+# Releasing
 
 For now, relasing is done manually.
 (See https://docs.scala-lang.org/overviews/contributors/index.html.)
