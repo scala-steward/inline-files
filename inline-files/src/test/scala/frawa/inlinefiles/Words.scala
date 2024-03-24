@@ -1,5 +1,6 @@
 package frawa.inlinefiles
 
+import scala.collection.immutable.Seq
 import scala.quoted.*
 import frawa.inlinefiles.compiletime.FileContents
 

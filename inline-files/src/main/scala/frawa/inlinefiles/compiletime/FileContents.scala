@@ -22,6 +22,7 @@ import scala.jdk.CollectionConverters.*
 
 import scala.io.Source
 import scala.util.Using
+import scala.collection.immutable.Seq
 
 import scala.annotation.experimental
 

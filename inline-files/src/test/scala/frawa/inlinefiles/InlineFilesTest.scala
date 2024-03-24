@@ -17,6 +17,7 @@
 package frawa.inlinefiles
 
 import InlineFiles.*
+import scala.collection.immutable.Seq
 
 import munit.FunSuite
 
