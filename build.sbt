@@ -41,8 +41,9 @@ lazy val sharedScalacSettings = Seq(
       "-new-syntax",
       "-indent"
     )
-  }
-  // ThisBuild / semanticdbEnabled := true
+  },
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision
 )
 
 lazy val sharedTestSettings = Seq(
