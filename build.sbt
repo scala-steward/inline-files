@@ -1,9 +1,10 @@
-addCommandAlias("lint", "headerCheckAll;fmtCheck;fixCheck;npmAll")
+addCommandAlias("lint", "headerCheckAll;fmtCheck;fixCheck")
 addCommandAlias("lintFix", "headerCreateAll;fixFix;fmtFix")
 addCommandAlias("fmtCheck", "all scalafmtCheck scalafmtSbtCheck")
 addCommandAlias("fmtFix", "all scalafmt scalafmtSbt")
 addCommandAlias("fixCheck", "scalafixAll --check")
 addCommandAlias("fixFix", "scalafixAll")
+addCommandAlias("testAll", "test;+ test")
 
 lazy val scalaVersion3 = "3.3.3"
 
@@ -21,11 +22,8 @@ lazy val sharedSettings = Seq(
   ),
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
-  versionScheme          := Some("semver-spec")
-)
-
-lazy val sharedPlatformSettings = Seq(
-  scalaVersion3
+  versionScheme          := Some("semver-spec"),
+  crossScalaVersions     := Nil
 )
 
 lazy val sharedScalacSettings = Seq(
@@ -57,6 +55,7 @@ lazy val root = project
     publish / skip := true
   )
   .aggregate(inlineFiles.jvm, inlineFiles.js)
+  .aggregate(example.jvm, example.js)
   .settings(sharedSettings)
 
 lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
@@ -74,3 +73,24 @@ lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
       s"-Xmacro-settings:MY_INLINE_HOME=${rootFolder.getAbsolutePath()}"
     )
   })
+
+lazy val example = crossProject(JVMPlatform, JSPlatform)
+  .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("example"))
+  .settings(
+    scalaVersion   := scalaVersion3,
+    name           := "example",
+    publish / skip := true
+  )
+  .settings(sharedTestSettings)
+  .settings(
+    crossScalaVersions := Seq(scalaVersion3, "2.13.12")
+    // scalacOptions ++= {
+    //   CrossVersion.partialVersion(scalaVersion.value) match {
+    //     case Some((2, 13)) => Seq("-Ytasty-reader")
+    //     case _             => Seq.empty
+    //   }
+    // }
+  )
+  .dependsOn(inlineFiles)
