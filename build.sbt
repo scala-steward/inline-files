@@ -15,9 +15,7 @@ lazy val sharedSettings = Seq(
   scalaVersion     := scalaVersion3,
   organization     := "io.github.frawa",
   organizationName := "Frank Wagner",
-  startYear        := Some(2022),
-  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  description := "A macro library to inline file contents.",
+  description      := "A macro library to inline file contents.",
   sonatypeProjectHosting := Some(
     GitHubHosting("frawa", "inline-files", "agilecoderfrank@gmail.com")
   ),
@@ -25,6 +23,11 @@ lazy val sharedSettings = Seq(
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
   versionScheme          := Some("semver-spec"),
   crossScalaVersions     := Nil
+)
+
+lazy val sharedHeaderSettings = Seq(
+  startYear := Some(2022),
+  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 )
 
 lazy val sharedScalacSettings = Seq(
@@ -57,6 +60,7 @@ lazy val root = project
   .aggregate(inlineFiles.jvm, inlineFiles.js)
   .aggregate(example.jvm, example.js)
   .settings(sharedSettings)
+  .settings(sharedHeaderSettings)
 
 lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
@@ -66,6 +70,7 @@ lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
     name := "inline-files"
   )
   .settings(sharedSettings)
+  .settings(sharedHeaderSettings)
   .settings(sharedScalacSettings)
   .settings(sharedTestSettings)
   .settings(scalacOptions ++= {
@@ -86,6 +91,7 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
     name           := "example",
     publish / skip := true
   )
+  .settings(sharedHeaderSettings)
   .settings(sharedTestSettings)
   .settings(
     crossScalaVersions := Seq(scalaVersion3, scalaVersion213),
