@@ -1,6 +1,10 @@
 # Releasing
 
-For now, relasing is done manually.
+Releasing is done via Github:
+Just finish the release draft, prefilled from GitHub Actions.
+
+## OLD
+For now, releasing is done manually.
 (See https://docs.scala-lang.org/overviews/contributors/index.html.)
 
 Choose version:
