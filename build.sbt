@@ -25,9 +25,11 @@ lazy val sharedSettings = Seq(
   crossScalaVersions     := Nil
 )
 
-lazy val sharedHeaderSettings = Seq(
+lazy val sharedLintSettings = Seq(
   startYear := Some(2022),
-  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision
 )
 
 lazy val sharedScalacSettings = Seq(
@@ -41,9 +43,7 @@ lazy val sharedScalacSettings = Seq(
       "-new-syntax",
       "-indent"
     )
-  },
-  semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision
+  }
 )
 
 lazy val sharedTestSettings = Seq(
@@ -61,7 +61,7 @@ lazy val root = project
   .aggregate(inlineFiles.jvm, inlineFiles.js)
   .aggregate(example.jvm, example.js)
   .settings(sharedSettings)
-  .settings(sharedHeaderSettings)
+  .settings(sharedLintSettings)
 
 lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
@@ -71,7 +71,7 @@ lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
     name := "inline-files"
   )
   .settings(sharedSettings)
-  .settings(sharedHeaderSettings)
+  .settings(sharedLintSettings)
   .settings(sharedScalacSettings)
   .settings(sharedTestSettings)
   .settings(scalacOptions ++= {
@@ -92,7 +92,7 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
     name           := "example",
     publish / skip := true
   )
-  .settings(sharedHeaderSettings)
+  .settings(sharedLintSettings)
   .settings(sharedTestSettings)
   .settings(
     crossScalaVersions := Seq(scalaVersion3, scalaVersion213),
