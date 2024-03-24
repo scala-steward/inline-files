@@ -25,8 +25,6 @@ object InlineFiles:
   import compiletime.FileContents.{given, *}
   import scala.language.experimental.macros
 
-  def inlineTextFile(path: String): String = macro Compat.inlineTextFileImpl
-
   inline def inlineTextFile(inline path: String): String = ${
     inlineTextFile_impl('path)
   }
@@ -69,13 +67,15 @@ object InlineFiles:
     Expr(readDeepTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
 
   // Scala 2 macros
+  def inlineTextFile(path: String): String = macro Compat.inlineTextFileImpl
+
   private object Compat {
     import scala.language.experimental.macros
     import scala.reflect.macros.blackbox.Context
     def inlineTextFileImpl(c: Context)(path: c.Expr[String]): c.Tree = {
       import c.universe._
 
-      val Literal(Constant(p: String)) = path.tree
+      val Literal(Constant(p: String)) = path.tree: @unchecked
       val content                      = readTextContentOf(p)
       Literal(Constant(content))
     }
