@@ -6,7 +6,8 @@ addCommandAlias("fixCheck", "scalafixAll --check")
 addCommandAlias("fixFix", "scalafixAll")
 addCommandAlias("testAll", "test;+ test")
 
-lazy val scalaVersion3 = "3.3.3"
+lazy val scalaVersion3   = "3.3.3"
+lazy val scalaVersion213 = "2.13.13"
 
 import xerial.sbt.Sonatype._
 
@@ -47,7 +48,6 @@ lazy val sharedTestSettings = Seq(
 )
 
 lazy val rootFolder = file(".")
-
 lazy val root = project
   .in(rootFolder)
   .settings(
@@ -73,6 +73,9 @@ lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
       s"-Xmacro-settings:MY_INLINE_HOME=${rootFolder.getAbsolutePath()}"
     )
   })
+  .settings(
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion213
+  )
 
 lazy val example = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
@@ -85,7 +88,7 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
   )
   .settings(sharedTestSettings)
   .settings(
-    crossScalaVersions := Seq(scalaVersion3, "2.13.12"),
+    crossScalaVersions := Seq(scalaVersion3, scalaVersion213),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 13)) => Seq("-Ytasty-reader")

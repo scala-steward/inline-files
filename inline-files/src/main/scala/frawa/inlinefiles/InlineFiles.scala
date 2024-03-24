@@ -17,9 +17,15 @@
 package frawa.inlinefiles
 
 import scala.quoted.*
+import frawa.inlinefiles.compiletime.FileContents.readTextContentOf
+import frawa.inlinefiles.compiletime.FileContents.readTextContentsIn
+import frawa.inlinefiles.compiletime.FileContents.readDeepTextContentsIn
 
 object InlineFiles:
   import compiletime.FileContents.{given, *}
+  import scala.language.experimental.macros
+
+  def inlineTextFile(path: String): String = macro Compat.inlineTextFileImpl
 
   inline def inlineTextFile(inline path: String): String = ${
     inlineTextFile_impl('path)
@@ -61,3 +67,16 @@ object InlineFiles:
       Quotes
   ): Expr[Map[String, String]] =
     Expr(readDeepTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
+
+  // Scala 2 macros
+  private object Compat {
+    import scala.language.experimental.macros
+    import scala.reflect.macros.blackbox.Context
+    def inlineTextFileImpl(c: Context)(path: c.Expr[String]): c.Tree = {
+      import c.universe._
+
+      val Literal(Constant(p: String)) = path.tree
+      val content                      = readTextContentOf(p)
+      Literal(Constant(content))
+    }
+  }
