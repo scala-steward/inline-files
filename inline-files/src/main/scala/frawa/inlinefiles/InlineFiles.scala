@@ -17,9 +17,12 @@
 package frawa.inlinefiles
 
 import scala.quoted.*
+import frawa.inlinefiles.compiletime.FileContents.*
+import scala.collection.immutable.ListMap
 
 object InlineFiles:
   import compiletime.FileContents.{given, *}
+  import scala.language.experimental.macros
 
   inline def inlineTextFile(inline path: String): String = ${
     inlineTextFile_impl('path)
@@ -61,3 +64,56 @@ object InlineFiles:
       Quotes
   ): Expr[Map[String, String]] =
     Expr(readDeepTextContentsIn(path.valueOrAbort, ext.valueOrAbort))
+
+  // Scala 2 macros
+  def inlineTextFile(path: String): String = macro Compat.inlineTextFileImpl
+  def inlineTextFiles(path: String, ext: String): Map[String, String] = macro
+    Compat.inlineTextFilesImpl
+  def inlineDeepTextFiles(path: String, ext: String): Map[String, String] = macro
+    Compat.inlineDeepTextFilesImpl
+
+  private object Compat {
+    import scala.language.experimental.macros
+    import scala.reflect.macros.blackbox.Context
+
+    def inlineTextFileImpl(c: Context)(path: c.Expr[String]): c.Tree = {
+      import c.universe._
+
+      val Literal(Constant(p: String)) = path.tree: @unchecked
+      val content                      = readTextContentOf(p)
+      Literal(Constant(content))
+    }
+
+    def inlineTextFilesImpl(c: Context)(path: c.Expr[String], ext: c.Expr[String]): c.Tree = {
+      import c.universe._
+
+      val Literal(Constant(p: String)) = path.tree: @unchecked
+      val Literal(Constant(e: String)) = ext.tree: @unchecked
+      val content                      = readTextContentsIn(p, e)
+      reifyMap(c)(content)
+    }
+
+    def inlineDeepTextFilesImpl(c: Context)(path: c.Expr[String], ext: c.Expr[String]): c.Tree = {
+      import c.universe._
+
+      val Literal(Constant(p: String)) = path.tree: @unchecked
+      val Literal(Constant(e: String)) = ext.tree: @unchecked
+      val content                      = readDeepTextContentsIn(p, e)
+      reifyMap(c)(content)
+    }
+
+    private def reifyMap(c: Context)(m: Map[String, String]): c.Tree = {
+      import c.universe._
+
+      val tuple2Apply = Select(Ident(TermName("Tuple2")), TermName("apply"))
+      val mapApply    = Select(Ident(TermName("Map")), TermName("apply"))
+
+      val pairs = m.map { (k, v) =>
+        val key   = Literal(Constant(k))
+        val value = Literal(Constant(v))
+        Apply(tuple2Apply, List(key, value))
+      }.toList
+
+      Apply(mapApply, pairs)
+    }
+  }

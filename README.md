@@ -23,3 +23,10 @@ Inline files with extension `.txt` in sub folder `folder1/folder2` under `./inli
 ```
 
 See all examples in [tests](inline-files/src/test/scala/frawa/inlinefiles/InlineFilesTest.scala).
+
+
+## References
+
+- https://docs.scala-lang.org/scala3/guides/migration/tutorial-macro-mixing.html
+- https://www.scala-sbt.org/1.x/docs/Cross-Build.html
+

@@ -1,11 +1,13 @@
-addCommandAlias("lint", "headerCheckAll;fmtCheck;fixCheck;npmAll")
+addCommandAlias("lint", "headerCheckAll;fmtCheck;fixCheck")
 addCommandAlias("lintFix", "headerCreateAll;fixFix;fmtFix")
 addCommandAlias("fmtCheck", "all scalafmtCheck scalafmtSbtCheck")
 addCommandAlias("fmtFix", "all scalafmt scalafmtSbt")
 addCommandAlias("fixCheck", "scalafixAll --check")
 addCommandAlias("fixFix", "scalafixAll")
+addCommandAlias("testAll", "test;+ test")
 
-lazy val scalaVersion3 = "3.3.3"
+lazy val scalaVersion3   = "3.3.3"
+lazy val scalaVersion213 = "2.13.13"
 
 import xerial.sbt.Sonatype._
 
@@ -13,19 +15,21 @@ lazy val sharedSettings = Seq(
   scalaVersion     := scalaVersion3,
   organization     := "io.github.frawa",
   organizationName := "Frank Wagner",
-  startYear        := Some(2022),
-  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  description := "A macro library to inline file contents.",
+  description      := "A macro library to inline file contents.",
   sonatypeProjectHosting := Some(
     GitHubHosting("frawa", "inline-files", "agilecoderfrank@gmail.com")
   ),
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
-  versionScheme          := Some("semver-spec")
+  versionScheme          := Some("semver-spec"),
+  crossScalaVersions     := Nil
 )
 
-lazy val sharedPlatformSettings = Seq(
-  scalaVersion3
+lazy val sharedLintSettings = Seq(
+  startYear := Some(2022),
+  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+  semanticdbEnabled := true,
+  semanticdbVersion := scalafixSemanticdb.revision
 )
 
 lazy val sharedScalacSettings = Seq(
@@ -40,7 +44,6 @@ lazy val sharedScalacSettings = Seq(
       "-indent"
     )
   }
-  // ThisBuild / semanticdbEnabled := true
 )
 
 lazy val sharedTestSettings = Seq(
@@ -49,7 +52,6 @@ lazy val sharedTestSettings = Seq(
 )
 
 lazy val rootFolder = file(".")
-
 lazy val root = project
   .in(rootFolder)
   .settings(
@@ -57,7 +59,9 @@ lazy val root = project
     publish / skip := true
   )
   .aggregate(inlineFiles.jvm, inlineFiles.js)
+  .aggregate(example.jvm, example.js)
   .settings(sharedSettings)
+  .settings(sharedLintSettings)
 
 lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
@@ -67,6 +71,7 @@ lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
     name := "inline-files"
   )
   .settings(sharedSettings)
+  .settings(sharedLintSettings)
   .settings(sharedScalacSettings)
   .settings(sharedTestSettings)
   .settings(scalacOptions ++= {
@@ -74,3 +79,28 @@ lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
       s"-Xmacro-settings:MY_INLINE_HOME=${rootFolder.getAbsolutePath()}"
     )
   })
+  .settings(
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion213
+  )
+
+lazy val example = crossProject(JVMPlatform, JSPlatform)
+  .crossType(CrossType.Pure)
+  .withoutSuffixFor(JVMPlatform)
+  .in(file("example"))
+  .settings(
+    scalaVersion   := scalaVersion3,
+    name           := "example",
+    publish / skip := true
+  )
+  .settings(sharedLintSettings)
+  .settings(sharedTestSettings)
+  .settings(
+    crossScalaVersions := Seq(scalaVersion3, scalaVersion213),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, 13)) => Seq("-Ytasty-reader")
+        case _             => Seq.empty
+      }
+    }
+  )
+  .dependsOn(inlineFiles)
