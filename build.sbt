@@ -22,7 +22,8 @@ lazy val sharedSettings = Seq(
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
   versionScheme          := Some("semver-spec"),
-  crossScalaVersions     := Nil
+  crossScalaVersions     := Nil,
+  publishTo              := sonatypePublishToBundle.value
 )
 
 lazy val sharedLintSettings = Seq(
