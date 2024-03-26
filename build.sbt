@@ -18,13 +18,22 @@ lazy val sharedSettings = Seq(
   organization     := "io.github.frawa",
   organizationName := "Frank Wagner",
   description      := "A macro library to inline file contents.",
+  homepage         := Some(url("https://github.com/frawa/inline-files")),
   sonatypeProjectHosting := Some(
     GitHubHosting("frawa", "inline-files", "agilecoderfrank@gmail.com")
   ),
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
   versionScheme          := Some("semver-spec"),
-  crossScalaVersions     := Nil
+  crossScalaVersions     := Nil,
+  developers := List(
+    Developer(
+      "frawa",
+      "Frank Wagner",
+      "agilecoderfrank@gmail.com",
+      url("https://github.com/frawa")
+    )
+  )
 )
 
 lazy val sharedLintSettings = Seq(
@@ -56,23 +65,23 @@ lazy val sharedTestSettings = Seq(
 lazy val rootFolder = file(".")
 lazy val root = project
   .in(rootFolder)
+  .settings(sharedSettings)
   .settings(
     name           := "inline-files-root",
     publish / skip := true
   )
   .aggregate(inlineFiles.jvm, inlineFiles.js)
   .aggregate(example.jvm, example.js)
-  .settings(sharedSettings)
   .settings(sharedLintSettings)
 
 lazy val inlineFiles = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
   .withoutSuffixFor(JVMPlatform)
   .in(file("inline-files"))
+  .settings(sharedSettings)
   .settings(
     name := "inline-files"
   )
-  .settings(sharedSettings)
   .settings(sharedLintSettings)
   .settings(sharedScalacSettings)
   .settings(sharedTestSettings)
@@ -89,6 +98,7 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
   .crossType(CrossType.Pure)
   .withoutSuffixFor(JVMPlatform)
   .in(file("example"))
+  .settings(sharedSettings)
   .settings(
     scalaVersion   := scalaVersion3,
     name           := "example",
