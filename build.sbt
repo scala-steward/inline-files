@@ -11,6 +11,8 @@ lazy val scalaVersion213 = "2.13.13"
 
 import xerial.sbt.Sonatype._
 
+publish / skip := true
+
 lazy val sharedSettings = Seq(
   scalaVersion     := scalaVersion3,
   organization     := "io.github.frawa",
@@ -22,8 +24,7 @@ lazy val sharedSettings = Seq(
   sonatypeCredentialHost := "s01.oss.sonatype.org",
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
   versionScheme          := Some("semver-spec"),
-  crossScalaVersions     := Nil,
-  publishTo              := sonatypePublishToBundle.value
+  crossScalaVersions     := Nil
 )
 
 lazy val sharedLintSettings = Seq(
