@@ -16,15 +16,14 @@
 
 package frawa.inlinefiles.compiletime
 
-import java.nio.file.{Files, Path, Paths}
 import java.io.File
-import scala.jdk.CollectionConverters.*
-
-import scala.io.Source
-import scala.util.Using
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import scala.collection.immutable.Seq
-
-import scala.annotation.experimental
+import scala.io.Source
+import scala.jdk.CollectionConverters._
+import scala.util.Using
 
 object FileContents:
   def readTextContentOf(path: String, home: Option[Path] = None): String =

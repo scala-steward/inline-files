@@ -16,14 +16,13 @@
 
 package frawa.inlinefiles
 
-import scala.quoted.*
-import scala.annotation.experimental
 import java.nio.file.Path
 import java.nio.file.Paths
+import scala.annotation.experimental
+import scala.quoted._
 
 @experimental
 object InlineFilesWithHome:
-  import InlineFilesWithHome.*
 
   inline def inlineTextFile(inline path: String)(inline homeSetting: String): String = ${
     inlineTextFile_impl('path, 'homeSetting)
@@ -55,7 +54,7 @@ object InlineFilesWithHome:
         .filterKeys(!_.contains("/"))
         .toMap
 
-  import compiletime.FileContents.{given, *}
+  import compiletime.FileContents.*
 
   def inlineTextFile_impl(path: Expr[String], homeSetting: Expr[String])(using
       Quotes

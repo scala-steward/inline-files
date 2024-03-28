@@ -16,10 +16,10 @@
 
 package frawa.inlinefiles
 
-import scala.collection.immutable.Seq
-
 import munit.FunSuite
+
 import scala.annotation.experimental
+import scala.collection.immutable.Seq
 
 @experimental
 class InlineFilesWithHomeTest extends FunSuite:

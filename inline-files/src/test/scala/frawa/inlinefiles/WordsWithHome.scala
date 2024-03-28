@@ -16,10 +16,11 @@
 
 package frawa.inlinefiles
 
-import scala.collection.immutable.Seq
-import scala.quoted.*
 import frawa.inlinefiles.compiletime.FileContents
+
 import scala.annotation.experimental
+import scala.collection.immutable.Seq
+import scala.quoted._
 
 @experimental
 object WordsWithHome {

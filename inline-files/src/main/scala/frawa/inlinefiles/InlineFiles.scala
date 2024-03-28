@@ -16,12 +16,10 @@
 
 package frawa.inlinefiles
 
-import scala.quoted.*
-import frawa.inlinefiles.compiletime.FileContents.*
-import scala.collection.immutable.ListMap
+import scala.quoted._
 
 object InlineFiles:
-  import compiletime.FileContents.{given, *}
+  import compiletime.FileContents.*
   import scala.language.experimental.macros
 
   inline def inlineTextFile(inline path: String): String = ${
