@@ -6,7 +6,7 @@ addCommandAlias("fixCheck", "scalafixAll --check")
 addCommandAlias("fixFix", "scalafixAll")
 addCommandAlias("testAll", "test;+ test")
 
-lazy val scalaVersion3   = "3.3.3"
+lazy val scalaVersion3   = "3.4.1"
 lazy val scalaVersion213 = "2.13.13"
 
 import xerial.sbt.Sonatype._
@@ -39,8 +39,7 @@ lazy val sharedSettings = Seq(
 lazy val sharedLintSettings = Seq(
   startYear := Some(2022),
   licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
-  semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision
+  semanticdbEnabled := true
 )
 
 lazy val sharedScalacSettings = Seq(
@@ -52,7 +51,8 @@ lazy val sharedScalacSettings = Seq(
       "-unchecked",
       "-Xmigration",
       "-new-syntax",
-      "-indent"
+      "-indent",
+      "-Wunused:linted"
     )
   }
 )
@@ -110,8 +110,8 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
     crossScalaVersions := Seq(scalaVersion3, scalaVersion213),
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 13)) => Seq("-Ytasty-reader")
-        case _             => Seq.empty
+        case Some((2, 13)) => Seq("-Ytasty-reader", "-Wunused:imports")
+        case _             => Seq("-Wunused:linted")
       }
     }
   )
