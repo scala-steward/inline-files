@@ -17,6 +17,7 @@
 package frawa.inlinefiles
 
 import scala.quoted._
+import scala.collection.immutable.Seq
 
 object InlineFiles:
   import compiletime.FileContents.*
@@ -87,10 +88,16 @@ object InlineFiles:
 
     def inlineTextFileImpl(c: Context)(path: c.Expr[String]): c.Tree = {
       import c.universe._
-
       val Literal(Constant(p: String)) = path.tree: @unchecked
       val content                      = readTextContentOf(p)
-      Literal(Constant(content))
+      inlineText(c)(content)
+    }
+
+    private def inlineText(c: Context)(text: String): c.Tree = {
+      import c.universe._
+      if text.size < CHUNK_SIZE
+      then Literal(Constant(text))
+      else joinChunks(c)(text.grouped(CHUNK_SIZE).toSeq)
     }
 
     def inlineTextFilesImpl(c: Context)(path: c.Expr[String], ext: c.Expr[String]): c.Tree = {
@@ -124,5 +131,19 @@ object InlineFiles:
       }.toList
 
       Apply(mapApply, pairs)
+    }
+
+    private def joinChunks(c: Context)(chunks: Seq[String]): c.Tree = {
+      import c.universe._
+
+      val seqApply = Select(Ident(TermName("Seq")), TermName("apply"))
+
+      val values = chunks.map { v =>
+        Literal(Constant(v))
+      }.toList
+
+      val seq      = Apply(seqApply, values)
+      val mkString = Select(seq, TermName("mkString"))
+      Apply(mkString, List(Literal(Constant(""))))
     }
   }
