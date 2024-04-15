@@ -91,3 +91,14 @@ class InlineFilesTest extends FunSuite:
     assertEquals(lines.size, 11313)
     val line13 = lines.drop(12).head
     assertEquals(line13, "This is line 13 of a large file.")
+
+  test("inline large file in folder"):
+    val inlined = inlineTextFiles("./test-files", ".txt").files()
+    val lines   = inlined.view.mapValues(_.split('\n').size).toMap
+    assertEquals(
+      lines,
+      Map(
+        "inlined.txt" -> 1,
+        "large.txt"   -> 11313
+      )
+    )
