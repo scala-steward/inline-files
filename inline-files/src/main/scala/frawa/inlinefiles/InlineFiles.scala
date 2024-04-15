@@ -16,8 +16,8 @@
 
 package frawa.inlinefiles
 
-import scala.quoted._
 import scala.collection.immutable.Seq
+import scala.quoted._
 
 object InlineFiles:
   import compiletime.FileContents.*
