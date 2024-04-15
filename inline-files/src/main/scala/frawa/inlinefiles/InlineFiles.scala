@@ -16,11 +16,14 @@
 
 package frawa.inlinefiles
 
+import scala.collection.immutable.Seq
 import scala.quoted._
 
 object InlineFiles:
   import compiletime.FileContents.*
   import scala.language.experimental.macros
+
+  private val CHUNK_SIZE = 8096
 
   inline def inlineTextFile(inline path: String): String = ${
     inlineTextFile_impl('path)
@@ -51,7 +54,29 @@ object InlineFiles:
   private def inlineTextFile_impl(path: Expr[String])(using
       Quotes
   ): Expr[String] =
-    Expr(readTextContentOf(path.valueOrAbort))
+    inlineText(readTextContentOf(path.valueOrAbort))
+
+  private[inlinefiles] def inlineText(text: String)(using
+      Quotes
+  ): Expr[String] =
+    if (text.size < CHUNK_SIZE)
+    then Expr(text)
+    else
+      val chunks = Expr.ofSeq(text.grouped(CHUNK_SIZE).toSeq.map(Expr.apply))
+      '{ ${ chunks }.mkString }
+
+  private[inlinefiles] given ToExpr[Map[String, String]] with {
+    def apply(inlined: Map[String, String])(using Quotes) =
+      val pairs = Expr.ofSeq(
+        inlined
+          .map { (k, v) =>
+            (Expr(k), inlineText(v))
+          }
+          .map(Expr.ofTuple)
+          .toSeq
+      )
+      '{ ${ pairs }.toMap }
+  }
 
   private def inlineTextFiles_impl(path: Expr[String], ext: Expr[String])(using
       Quotes
@@ -76,10 +101,16 @@ object InlineFiles:
 
     def inlineTextFileImpl(c: Context)(path: c.Expr[String]): c.Tree = {
       import c.universe._
-
       val Literal(Constant(p: String)) = path.tree: @unchecked
       val content                      = readTextContentOf(p)
-      Literal(Constant(content))
+      inlineText(c)(content)
+    }
+
+    private def inlineText(c: Context)(text: String): c.Tree = {
+      import c.universe._
+      if text.size < CHUNK_SIZE
+      then Literal(Constant(text))
+      else joinChunks(c)(text.grouped(CHUNK_SIZE).toSeq)
     }
 
     def inlineTextFilesImpl(c: Context)(path: c.Expr[String], ext: c.Expr[String]): c.Tree = {
@@ -108,10 +139,24 @@ object InlineFiles:
 
       val pairs = m.map { (k, v) =>
         val key   = Literal(Constant(k))
-        val value = Literal(Constant(v))
+        val value = inlineText(c)(v)
         Apply(tuple2Apply, List(key, value))
       }.toList
 
       Apply(mapApply, pairs)
+    }
+
+    private def joinChunks(c: Context)(chunks: Seq[String]): c.Tree = {
+      import c.universe._
+
+      val seqApply = Select(Ident(TermName("Seq")), TermName("apply"))
+
+      val values = chunks.map { v =>
+        Literal(Constant(v))
+      }.toList
+
+      val seq      = Apply(seqApply, values)
+      val mkString = Select(seq, TermName("mkString"))
+      Apply(mkString, List(Literal(Constant(""))))
     }
   }

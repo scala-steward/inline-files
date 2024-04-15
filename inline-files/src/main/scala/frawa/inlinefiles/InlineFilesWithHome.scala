@@ -23,6 +23,7 @@ import scala.quoted._
 
 @experimental
 object InlineFilesWithHome:
+  import InlineFiles.{inlineText, given}
 
   inline def inlineTextFile(inline path: String)(inline homeSetting: String): String = ${
     inlineTextFile_impl('path, 'homeSetting)
@@ -59,7 +60,9 @@ object InlineFilesWithHome:
   def inlineTextFile_impl(path: Expr[String], homeSetting: Expr[String])(using
       Quotes
   ): Expr[String] =
-    Expr(readTextContentOf(path.valueOrAbort, Some(resolveHome(homeSetting.valueOrAbort))))
+    inlineText(
+      readTextContentOf(path.valueOrAbort, Some(resolveHome(homeSetting.valueOrAbort)))
+    )
 
   def inlineTextFiles_impl(path: Expr[String], ext: Expr[String], homeSetting: Expr[String])(using
       Quotes

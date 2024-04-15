@@ -24,12 +24,27 @@ class ExampleTest extends FunSuite {
     assertEquals(Example.inlinedText, "This file content will be inlined.")
   }
 
+  test("inlined large file") {
+    val lines = Example.largeText.split('\n').size
+    assertEquals(lines, 11313)
+  }
+
   test("inline files in a folder") {
     assertEquals(
       Example.inlinedTextFiles,
       Map(
         "inlined1.txt" -> "First",
         "inlined2.txt" -> "Second"
+      )
+    )
+  }
+
+  test("inline large file in folder") {
+    val lines = Example.largeInFolder.view.mapValues(_.split('\n').size).toMap
+    assertEquals(
+      lines,
+      Map(
+        "large.txt" -> 11313
       )
     )
   }
