@@ -23,7 +23,7 @@ import scala.quoted._
 
 @experimental
 object InlineFilesWithHome:
-  import InlineFiles.inlineText
+  import InlineFiles.{inlineText, given}
 
   inline def inlineTextFile(inline path: String)(inline homeSetting: String): String = ${
     inlineTextFile_impl('path, 'homeSetting)

@@ -65,6 +65,19 @@ object InlineFiles:
       val chunks = Expr.ofSeq(text.grouped(CHUNK_SIZE).toSeq.map(Expr.apply))
       '{ ${ chunks }.mkString }
 
+  private[inlinefiles] given ToExpr[Map[String, String]] with {
+    def apply(inlined: Map[String, String])(using Quotes) =
+      val pairs = Expr.ofSeq(
+        inlined
+          .map { (k, v) =>
+            (Expr(k), inlineText(v))
+          }
+          .map(Expr.ofTuple)
+          .toSeq
+      )
+      '{ ${ pairs }.toMap }
+  }
+
   private def inlineTextFiles_impl(path: Expr[String], ext: Expr[String])(using
       Quotes
   ): Expr[Map[String, String]] =
