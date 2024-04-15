@@ -22,6 +22,8 @@ object InlineFiles:
   import compiletime.FileContents.*
   import scala.language.experimental.macros
 
+  private val CHUNK_SIZE = 8096
+
   inline def inlineTextFile(inline path: String): String = ${
     inlineTextFile_impl('path)
   }
@@ -51,7 +53,16 @@ object InlineFiles:
   private def inlineTextFile_impl(path: Expr[String])(using
       Quotes
   ): Expr[String] =
-    Expr(readTextContentOf(path.valueOrAbort))
+    inlineText(readTextContentOf(path.valueOrAbort))
+
+  private[inlinefiles] def inlineText(text: String)(using
+      Quotes
+  ): Expr[String] =
+    if (text.size < CHUNK_SIZE)
+    then Expr(text)
+    else
+      val chunks = Expr.ofSeq(text.grouped(CHUNK_SIZE).toSeq.map(Expr.apply))
+      '{ ${ chunks }.mkString }
 
   private def inlineTextFiles_impl(path: Expr[String], ext: Expr[String])(using
       Quotes

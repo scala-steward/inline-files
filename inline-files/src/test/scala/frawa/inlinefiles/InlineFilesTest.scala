@@ -84,3 +84,10 @@ class InlineFilesTest extends FunSuite:
       )
     )
   }
+
+  test("inline a large file"):
+    val inlined = inlineTextFile("./test-files/large.txt")
+    val lines   = inlined.split('\n')
+    assertEquals(lines.size, 11313)
+    val line13 = lines.drop(12).head
+    assertEquals(line13, "This is line 13 of a large file.")
