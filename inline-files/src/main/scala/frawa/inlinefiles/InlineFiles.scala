@@ -139,7 +139,7 @@ object InlineFiles:
 
       val pairs = m.map { (k, v) =>
         val key   = Literal(Constant(k))
-        val value = Literal(Constant(v))
+        val value = inlineText(c)(v)
         Apply(tuple2Apply, List(key, value))
       }.toList
 
