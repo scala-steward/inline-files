@@ -7,7 +7,7 @@ addCommandAlias("fixFix", "scalafixAll")
 addCommandAlias("testAll", "test;+ test")
 
 lazy val scalaVersion3   = "3.5.1"
-lazy val scalaVersion213 = "2.13.13"
+lazy val scalaVersion213 = "2.13.15"
 
 import xerial.sbt.Sonatype._
 
@@ -105,6 +105,9 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
     publish / skip := true
   )
   .settings(sharedLintSettings)
+  .settings(
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
   .settings(sharedTestSettings)
   .settings(
     crossScalaVersions := Seq(scalaVersion3, scalaVersion213),
