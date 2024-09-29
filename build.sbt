@@ -105,6 +105,9 @@ lazy val example = crossProject(JVMPlatform, JSPlatform)
     publish / skip := true
   )
   .settings(sharedLintSettings)
+  .settings(
+    semanticdbVersion := scalafixSemanticdb.revision
+  )
   .settings(sharedTestSettings)
   .settings(
     crossScalaVersions := Seq(scalaVersion3, scalaVersion213),
