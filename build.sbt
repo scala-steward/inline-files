@@ -58,7 +58,7 @@ lazy val sharedScalacSettings = Seq(
 )
 
 lazy val sharedTestSettings = Seq(
-  libraryDependencies += "org.scalameta" %%% "munit" % "1.0.2" % Test,
+  libraryDependencies += "org.scalameta" %%% "munit" % "1.0.3" % Test,
   Test / testOptions += Tests.Argument("-q", "--summary=0")
 )
 
