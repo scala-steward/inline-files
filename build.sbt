@@ -6,8 +6,13 @@ addCommandAlias("fixCheck", "scalafixAll --check")
 addCommandAlias("fixFix", "scalafixAll")
 addCommandAlias("testAll", "test;+ test")
 
-lazy val scalaVersion3   = "3.5.2"
-lazy val scalaVersion213 = "2.13.15"
+lazy val scalaVersion3lts = "3.3.4"
+lazy val scalaVersion213  = "2.13.15"
+
+// WONTWORK:
+// class scala.tools.tasty.UnpickleException/Forward incompatible TASTy file has version 28.6, produced by Scala 3.6.x
+// lazy val scalaVersion3 = "3.6.2"
+lazy val scalaVersion3 = scalaVersion3lts
 
 import xerial.sbt.Sonatype._
 
@@ -38,7 +43,7 @@ lazy val sharedSettings = Seq(
 
 lazy val sharedLintSettings = Seq(
   startYear := Some(2022),
-  licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+  licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
   semanticdbEnabled := true
 )
 
