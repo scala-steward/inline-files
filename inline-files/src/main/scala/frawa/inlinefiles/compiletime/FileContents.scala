@@ -66,8 +66,8 @@ object FileContents:
   private def parseTextContentsIn[T](root: Path, path: Path, ext: String, recurse: Boolean)(
       f: String => T
   ): Map[String, T] =
-    val items = folderItems(path)
-    val files = parseTextContentsIn(root, items, ext)(f)
+    val items   = folderItems(path)
+    val files   = parseTextContentsIn(root, items, ext)(f)
     val folders = items
       .filter(_.toFile.isDirectory)
       .flatMap(path => parseTextContentsIn(root, path, ext, recurse)(f))

@@ -92,7 +92,7 @@ object InlineFilesWithHome:
   ): Path =
     import quotes.reflect.*
     val prefix = s"${setting}="
-    val home = CompilationInfo.XmacroSettings
+    val home   = CompilationInfo.XmacroSettings
       .find(_.startsWith(prefix))
       .map(_.substring(prefix.length()))
       .getOrElse {
