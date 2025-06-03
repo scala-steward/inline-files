@@ -19,11 +19,11 @@ import xerial.sbt.Sonatype._
 publish / skip := true
 
 lazy val sharedSettings = Seq(
-  scalaVersion     := scalaVersion3,
-  organization     := "io.github.frawa",
-  organizationName := "Frank Wagner",
-  description      := "A macro library to inline file contents.",
-  homepage         := Some(url("https://github.com/frawa/inline-files")),
+  scalaVersion           := scalaVersion3,
+  organization           := "io.github.frawa",
+  organizationName       := "Frank Wagner",
+  description            := "A macro library to inline file contents.",
+  homepage               := Some(url("https://github.com/frawa/inline-files")),
   sonatypeProjectHosting := Some(
     GitHubHosting("frawa", "inline-files", "agilecoderfrank@gmail.com")
   ),
@@ -31,7 +31,7 @@ lazy val sharedSettings = Seq(
   sonatypeRepository     := "https://s01.oss.sonatype.org/service/local",
   versionScheme          := Some("semver-spec"),
   crossScalaVersions     := Seq(scalaVersion3),
-  developers := List(
+  developers             := List(
     Developer(
       "frawa",
       "Frank Wagner",
@@ -68,7 +68,7 @@ lazy val sharedTestSettings = Seq(
 )
 
 lazy val rootFolder = file(".")
-lazy val root = project
+lazy val root       = project
   .in(rootFolder)
   .settings(sharedSettings)
   .settings(
